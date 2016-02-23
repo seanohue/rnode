@@ -20,6 +20,7 @@ function main() {
 function RedditPost(post) {
   console.log(post);
   this.title = post.data.title;
+  this.body = post.data.selftext_html;
   this.permalink = post.data.permalink;
   this.author = post.data.author;
   this.createdUtc = post.data.created_utc;
@@ -136,7 +137,14 @@ function writeHeader(arg) {
 function getItemRow(item) {
   return item.title + "\n" +
     "   by: " + item.author + " on " +
-    new Date(item.createdUtc * 1000).toString() + "\n";
+    new Date(item.createdUtc * 1000).toString() + "\n\n\n" + stripHtml(item.body);
+
+}
+
+function stripHtml(content) {
+  return content.replace('<br/>', '\n')
+                .replace(/<(?:.|\n)*?>/gm, '');
+
 }
 
 function clearTerminal() {
