@@ -17,13 +17,13 @@ function main() {
 }
 
 //***** Classes
-//This class represents each item in the fist page of a subreddit
-function RedditItem(source) {
-  this.title = source.data.title;
-  this.permalink = source.data.permalink;
-  this.author = source.data.author;
-  this.createdUtc = source.data.created_utc;
-  this.name = source.data.name;
+function RedditItem(post) {
+  console.log(post);
+  this.title = post.data.title;
+  this.permalink = post.data.permalink;
+  this.author = post.data.author;
+  this.createdUtc = post.data.created_utc;
+  this.name = post.data.name;
   this.commentsModel = null;
 
   this.setCommentsModel = function(commentsModel) {
@@ -34,12 +34,11 @@ function RedditItem(source) {
   };
 }
 
-//This class represents the list object and a list of comments about it.
-function RedditCommentsModel(source) {
-  this.source = source;
-  this.title = source[0].data.children[0].data.title;
-  this.author = source[0].data.children[0].data.author;
-  this.comments = source[1].data.children;
+function RedditCommentsModel(comment) {
+  this.source = comment;
+  this.title = comment[0].data.children[0].data.title;
+  this.author = comment[0].data.children[0].data.author;
+  this.comments = comment[1].data.children;
 }
 
 //***** Methods
