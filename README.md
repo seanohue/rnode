@@ -1,2 +1,2 @@
-# codesamples
-See some code samples here
+# rnode
+Browse reddit from your terminal using node.
