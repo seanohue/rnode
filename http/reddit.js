@@ -1,5 +1,5 @@
 var HOST = "www.reddit.com";
-var TARGET_SUB_REDDIT = "/r/Detroit";
+var TARGET_SUB_REDDIT = "/r/relationships";
 var TOP_COUNT = 5;
 var CLEAR_TERM = '\u001B[2J\u001B[0;0f';
 
@@ -17,7 +17,7 @@ function main() {
 }
 
 //***** Classes
-function RedditItem(post) {
+function RedditPost(post) {
   console.log(post);
   this.title = post.data.title;
   this.permalink = post.data.permalink;
@@ -43,10 +43,13 @@ function RedditCommentsModel(comment) {
 
 //***** Methods
 function getSubRedditData(path, success) {
-  return http.get({
+
+  var req = {
     host: HOST,
     path: path + ".json"
-  }, (response) => {
+  };
+
+  return http.get(req, (response) => {
     var body = "";
 
     response.on("data", (d) => {
@@ -70,11 +73,10 @@ function getSubRedditData(path, success) {
   });
 }
 
-function getArrayOfRedditItems(jsonArray) {
-  console.log(jsonArray);
+function getArrayOfRedditPosts(postArray) {
   var arr = [];
-  jsonArray.forEach((item) => {
-    arr.push(new RedditItem(item));
+  postArray.forEach((item) => {
+    arr.push(new RedditPost(item));
   });
   return arr;
 }
