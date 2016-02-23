@@ -4,11 +4,13 @@ var TOP_COUNT = 5;
 var CLEAR_TERM = '\u001B[2J\u001B[0;0f';
 
 var http = require("http");
+var querystring = require('querystring');
 
 var rl = require("readline").createInterface({
   input: process.stdin,
   output: process.stdout
 });
+
 
 function main() {
   getSubRedditData(TARGET_SUB_REDDIT, (result) => {
@@ -95,7 +97,8 @@ function showRedditComments(item) {
 
     for (var i = 1; i < len; i++) {
       var comment = commentModel.comments[i].data;
-      console.log(" %s. [" + comment.author + "] - " + comment.body, i);
+      console.log(" %s. [" + comment.author + "] - " + comment.body + '\n\n\n',
+        i);
     }
 
   } else {
@@ -137,14 +140,15 @@ function writeHeader(arg) {
 function getItemRow(item) {
   return item.title + "\n" +
     "   by: " + item.author + " on " +
-    new Date(item.createdUtc * 1000).toString() + "\n\n\n" + stripHtml(item.body);
-
+    new Date(item.createdUtc * 1000).toString() + "\n\n\n" + cleanHtml(item.body);
 }
 
-function stripHtml(content) {
-  return content.replace('<br/>', '\n')
-                .replace(/<(?:.|\n)*?>/gm, '');
-
+function cleanHtml(content) {
+  return querystring
+    .unescape(querystring.escape(content))
+    .replace('-- SC_OFF --', '')
+    .replace('-- SC_ON --', '')
+    .replace(/&([^>]+);/, '');
 }
 
 function clearTerminal() {
