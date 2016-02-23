@@ -4,13 +4,17 @@ var TOP_COUNT = 5;
 var CLEAR_TERM = '\u001B[2J\u001B[0;0f';
 
 var http = require("http");
-var querystring = require('querystring');
+var unescape = require('unescape');
+var striptags = require('striptags');
 
-var rl = require("readline").createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
 
+var rl = require("readline")
+  .createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+
+var divider = "\n\n================================\n\n";
 
 function main() {
   getSubRedditData(TARGET_SUB_REDDIT, (result) => {
@@ -115,7 +119,7 @@ function startSubRedditGopher(jsonResponse) {
   clearTerminal();
   writeHeader("topics");
   for (var i = 1; i <= TOP_COUNT; i++) {
-    console.log(i + ". " + getItemRow(items[i]));
+    console.log(divider + i + ". " + getItemRow(items[i]));
   }
 
   rl.question("Your Selection: ", (selection) => {
@@ -134,21 +138,22 @@ function startSubRedditGopher(jsonResponse) {
 
 function writeHeader(arg) {
   console.log("Welcome to the " + TARGET_SUB_REDDIT + " Gopher system.\n");
-  console.log("Here are top " + TOP_COUNT + " most recent %s:\n", arg);
+  console.log("Here are top " + TOP_COUNT + " most recent %s:" + divider, arg);
 }
 
 function getItemRow(item) {
   return item.title + "\n" +
     "   by: " + item.author + " on " +
-    new Date(item.createdUtc * 1000).toString() + "\n\n\n" + cleanHtml(item.body);
+    new Date(item.createdUtc * 1000).toString() + divider + cleanHtml(
+      item.body) + "\n";
 }
 
 function cleanHtml(content) {
-  return querystring
-    .unescape(querystring.escape(content))
+  return striptags(unescape(content))
     .replace('-- SC_OFF --', '')
     .replace('-- SC_ON --', '')
-    .replace(/&([^>]+);/, '');
+    .replace('&#39;', '\'')
+    .replace('&quot;', '"');
 }
 
 function clearTerminal() {

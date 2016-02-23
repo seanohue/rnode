@@ -3,7 +3,9 @@
   "version": "0.0.1",
   "description": "reddit node client",
   "main": "reddit.js",
-  "dependencies": {},
+  "dependencies": {
+    "striptags": "^2.1.1"
+  },
   "devDependencies": {
     "unescape": "^0.1.1"
   },
