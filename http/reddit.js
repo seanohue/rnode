@@ -1,4 +1,3 @@
-
 var HOST = "www.reddit.com";
 var TARGET_SUB_REDDIT = "/r/Detroit";
 var TOP_COUNT = 5;
