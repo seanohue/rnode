@@ -121,12 +121,10 @@ function startSubRedditGopher(jsonResponse) {
           result));
         showRedditComments(items[selection]);
       });
-
     } else {
       main();
     }
   });
-
 }
 
 function writeHeader(arg) {
