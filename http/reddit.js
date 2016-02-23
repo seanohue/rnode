@@ -107,7 +107,7 @@ function showRedditComments(item) {
 }
 
 function startSubRedditGopher(jsonResponse) {
-  var items = getArrayOfRedditItems(jsonResponse.data.children);
+  var items = getArrayOfRedditPosts(jsonResponse.data.children);
   clearTerminal();
   writeHeader("topics");
   for (var i = 1; i <= TOP_COUNT; i++) {
