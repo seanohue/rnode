@@ -1,12 +1,10 @@
 {
   "name": "rnode",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "reddit node client",
   "main": "reddit.js",
   "dependencies": {
     "dotfile-config": "^1.0.1",
-    "html-decoder": "^1.0.2",
-    "node-fetch": "^1.6.3",
     "snoocore": "^3.3.1"
   },
   "devDependencies": {},

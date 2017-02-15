@@ -1,11 +1,12 @@
-const HOST = "http://www.reddit.com";
-const TARGET_SUB_REDDIT = "/r/news";
-const TOP_COUNT = 5;
-const CLEAR_TERM = '\u001B[2J\u001B[0;0f';
+const ENDPOINT          = "/r/";
+const TARGET_SUB_REDDIT = "news/hot";
+const TOP_COUNT         = 5;
+const CLEAR_TERM        = '\u001B[2J\u001B[0;0f';
 
-const fetch = require('node-fetch');
-const decoder = require('html-decoder');
 const config = require('dotfile-config')('.redditrc');
+
+const SnooCore = require('snoocore');
+const reddit = new SnooCore(config.get());
 
 const RedditPost = require('./lib/RedditPost');
 const RedditComment = require('./lib/RedditComment');
@@ -21,15 +22,40 @@ const divider = `
 `;
 
 function main() {
-  getSubRedditData(TARGET_SUB_REDDIT, startSubRedditGopher);
+  console.log("Authenticating...");
+  reddit.auth();
+  getSubRedditData()
+    .then(startSubRedditGopher);
 }
 
-function getSubRedditData(path, success) {
-
-  const url = `${HOST + TARGET_SUB_REDDIT}`;
-  return fetch(url)
-    .then(response => response.text(),
+function getSubRedditData() {
+  const url = `${ENDPOINT + TARGET_SUB_REDDIT}`;
+  return reddit(url).listing()
+    .then(response => console.log(response) || response,
           error    => { throw new Error(error); });
+}
+
+function startSubRedditGopher(jsonResponse) {
+  console.log(jsonResponse.children);
+  const items = getArrayOfRedditPosts(jsonResponse.children);
+  clearTerminal();
+  writeHeader("topics");
+  for (var i = 1; i <= TOP_COUNT; i++) {
+    console.log(divider + i + ". " + getItemRow(items[i]));
+  }
+
+  rl.question("Your Selection: ", (selection) => {
+    if (selection > 0 && selection <= TOP_COUNT) {
+
+      getSubRedditData(items[selection].permalink, function(result) {
+        items[selection].setCommentsModel(new RedditComment(
+          result));
+        showRedditComments(items[selection]);
+      });
+    } else {
+      main();
+    }
+  });
 }
 
 function getArrayOfRedditPosts(postArray) {
@@ -63,27 +89,7 @@ function showRedditComments(item) {
   rl.question("\nEnter to continue", main);
 }
 
-function startSubRedditGopher(jsonResponse) {
-  const items = getArrayOfRedditPosts(jsonResponse.data.children);
-  clearTerminal();
-  writeHeader("topics");
-  for (var i = 1; i <= TOP_COUNT; i++) {
-    console.log(divider + i + ". " + getItemRow(items[i]));
-  }
 
-  rl.question("Your Selection: ", (selection) => {
-    if (selection > 0 && selection <= TOP_COUNT) {
-
-      getSubRedditData(items[selection].permalink, function(result) {
-        items[selection].setCommentsModel(new RedditComment(
-          result));
-        showRedditComments(items[selection]);
-      });
-    } else {
-      main();
-    }
-  });
-}
 
 function writeHeader(arg) {
   console.log(`Welcome to the ${TARGET_SUB_REDDIT} Gopher system.`);
@@ -97,14 +103,9 @@ function getItemRow(item) {
 }
 
 function getFormattedDateAndPost(item) {
-  return new Date(item.createdUtc * 1000).toString() + divider + cleanHtml(item.body)
+  return new Date(item.createdUtc * 1000).toString() + divider + item.body;
 }
 
-function cleanHtml(content) {
-  return decoder.decode(content)
-    .replace('-- SC_OFF --', '')
-    .replace('-- SC_ON --', '');
-}
 
 function clearTerminal() {
   console.log(CLEAR_TERM);
