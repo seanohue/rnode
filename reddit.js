@@ -1,4 +1,4 @@
-const HOST = "www.reddit.com";
+const HOST = "http://www.reddit.com";
 const TARGET_SUB_REDDIT = "/r/news";
 const TOP_COUNT = 5;
 const CLEAR_TERM = '\u001B[2J\u001B[0;0f';
@@ -23,40 +23,16 @@ function main() {
   getSubRedditData(TARGET_SUB_REDDIT, startSubRedditGopher);
 }
 
-//***** Methods
 function getSubRedditData(path, success) {
 
-  const req = {
-    host: HOST,
-    path: path + ".json"
-  };
-
-  return http.get(req, (response) => {
-    let body = "";
-    response.on("data", (d) => {
-      console.log(response);
-      console.log(d);
-      body += d;
-    });
-
-    response.on("end", () => {
-      try {
-        const parsed = JSON.parse(body);
-        success(parsed);
-      } catch (err) {
-        console.log("There was an error parsing the json response:", err, body);
-      }
-    });
-
-    response.on("error", (e) => {
-      console.log("There was an error " + e);
-    });
-
-  });
+  const url = `${HOST + TARGET_SUB_REDDIT}`;
+  return fetch(url)
+    .then(response => response.text(),
+          error    => { throw new Error(error); });
 }
 
 function getArrayOfRedditPosts(postArray) {
-  return postArray.map(item => new RedditPost(item));posts = [];
+  return postArray.map(item => new RedditPost(item));
 }
 
 function showRedditComments(item) {
