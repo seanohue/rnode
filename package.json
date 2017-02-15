@@ -4,11 +4,10 @@
   "description": "reddit node client",
   "main": "reddit.js",
   "dependencies": {
-    "striptags": "^2.1.1"
+    "html-decoder": "^1.0.2",
+    "node-fetch": "^1.6.3"
   },
-  "devDependencies": {
-    "unescape": "^0.1.1"
-  },
+  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
