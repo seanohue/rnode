@@ -5,6 +5,7 @@ const CLEAR_TERM = '\u001B[2J\u001B[0;0f';
 
 const fetch = require('node-fetch');
 const decoder = require('html-decoder');
+const config = require('dotfile-config')('.redditrc');
 
 const RedditPost = require('./lib/RedditPost');
 const RedditComment = require('./lib/RedditComment');
